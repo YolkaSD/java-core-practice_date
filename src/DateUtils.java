@@ -40,13 +40,11 @@ public class DateUtils {
             LocalDate birthdayDate = LocalDate.parse(birthdayDateString, DATE_TIME_FORMATTERS.get(2));
             LocalDate today = LocalDate.now();
 
-            int days = (int) ChronoUnit.DAYS.between(birthdayDate, today);
-
             if (birthdayDate.isAfter(today)) {
                 throw new InvalidDateException("Birthday date is in the future: " + birthdayDateString + ". The date should be in format dd-MM-yyyy.");
             }
 
-            return days;
+            return (int) ChronoUnit.DAYS.between(birthdayDate, today);
         } catch (DateTimeParseException e) {
             throw new InvalidDateException("Invalid date format: " + birthdayDateString + ". The date should be in format dd-MM-yyyy.");
         }
@@ -73,8 +71,9 @@ public class DateUtils {
 
     /**
      * Конвертирует время из одной временной зоны в другую.
+     *
      * @param zonedDateTime исходное время в виде объекта ZonedDateTime, не может быть null
-     * @param targetZoneId целевая временная зона в виде объекта ZoneId, не может быть null
+     * @param targetZoneId  целевая временная зона в виде объекта ZoneId, не может быть null
      * @return время в целевой временной зоне в виде объекта ZonedDateTime
      * @throws NullPointerException если zonedDateTime или targetZoneId равны null
      */
@@ -86,14 +85,18 @@ public class DateUtils {
 
     /**
      * Метод findMaxDate находит наиболее старшую дату из листа localDateList
+     *
      * @param localDateList содержит в себе список дат
      * @return возвращает наиболее старшую дату
      * @throws IllegalArgumentException Если список localDateList пустой.
      */
     public static LocalDateTime findMaxDate(List<LocalDateTime> localDateList) {
+        if (localDateList.isEmpty()) {
+            throw new IllegalArgumentException("List cannot be empty");
+        }
         return localDateList.stream()
                 .max(LocalDateTime::compareTo)
-                .orElseThrow(() -> new IllegalArgumentException("List cannot be empty"));
+                .orElse(null);
     }
 
     static class InvalidDateException extends Exception {
